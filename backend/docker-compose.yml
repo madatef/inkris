@@ -1,0 +1,101 @@
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      # Your app settings:
+      APP_ENVIRONMENT: production
+      PORT: 8000
+
+      # Postgres via Supabase (set these in a local .env and use env_file below)
+      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL_SYNC: ${DATABASE_URL_SYNC}
+      AGENT_STATE_DATABASE_URL: ${AGENT_STATE_DATABASE_URL}
+      AGENT_STATE_DATABASE_URL_ASYNC: ${AGENT_STATE_DATABASE_URL_ASYNC}
+
+      SECRET_KEY: ${SECRET_KEY}
+
+      # Redis DBs: 0 broker, 1 backend, 2 events
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      EVENTS_BROKER_URL: redis://redis:6379/2
+
+      # External services
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      AWS_S3_MEDIA_BUCKET: ${AWS_S3_MEDIA_BUCKET}
+
+      QDRANT_URL: ${QDRANT_URL}
+      QDRANT_API_KEY: ${QDRANT_API_KEY}
+      QDRANT_COLLECTION: ${QDRANT_COLLECTION}
+
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      JINA_API_KEY: ${JINA_API_KEY}
+      SERPER_API_KEY: ${SERPER_API_KEY}
+
+      LANGCHAIN_API_KEY: ${LANGCHAIN_API_KEY}
+      LANGCHAIN_TRACING_V2: ${LANGCHAIN_TRACING_V2}
+      LANGCHAIN_PROJECT: ${LANGCHAIN_PROJECT}
+      LANGCHAIN_ENDPOINT: ${LANGCHAIN_ENDPOINT}
+
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      celery -A app.tasks.celery:celery_app worker
+      --loglevel=info
+      --concurrency=1
+      --prefetch-multiplier=1
+    environment:
+      APP_ENVIRONMENT: production
+
+      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL_SYNC: ${DATABASE_URL_SYNC}
+      AGENT_STATE_DATABASE_URL: ${AGENT_STATE_DATABASE_URL}
+      AGENT_STATE_DATABASE_URL_ASYNC: ${AGENT_STATE_DATABASE_URL_ASYNC}
+
+      SECRET_KEY: ${SECRET_KEY}
+
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      EVENTS_BROKER_URL: redis://redis:6379/2
+
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      AWS_S3_MEDIA_BUCKET: ${AWS_S3_MEDIA_BUCKET}
+
+      QDRANT_URL: ${QDRANT_URL}
+      QDRANT_API_KEY: ${QDRANT_API_KEY}
+      QDRANT_COLLECTION: ${QDRANT_COLLECTION}
+
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      JINA_API_KEY: ${JINA_API_KEY}
+      SERPER_API_KEY: ${SERPER_API_KEY}
+
+      LANGCHAIN_API_KEY: ${LANGCHAIN_API_KEY}
+      LANGCHAIN_TRACING_V2: ${LANGCHAIN_TRACING_V2}
+      LANGCHAIN_PROJECT: ${LANGCHAIN_PROJECT}
+      LANGCHAIN_ENDPOINT: ${LANGCHAIN_ENDPOINT}
+
+    env_file:
+      - .env
+    depends_on:
+      - redis

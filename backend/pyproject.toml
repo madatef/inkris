@@ -1,0 +1,38 @@
+[project]
+name = "inkris"
+version = "0.1.0"
+description = "Inkris let's upload your files, talk with them, search through them, go beyond their content with web search of relevant or related content, and generate images, videos, charts, plots, etc based on their content."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aioboto3>=15.5.0",
+    "aioduckdb>=0.1.0",
+    "alembic>=1.17.2",
+    "asyncpg>=0.31.0",
+    "celery[redis]>=5.6.1",
+    "fastapi>=0.124.4",
+    "langchain>=1.2.3",
+    "langchain-core>=1.2.6",
+    "langchain-openai>=1.1.6",
+    "langgraph>=1.0.5",
+    "langgraph-checkpoint-postgres>=3.0.2",
+    "langsmith>=0.7.3",
+    "llama-index>=0.14.10",
+    "llama-index-embeddings-openai>=0.5.1",
+    "llama-index-vector-stores-qdrant>=0.9.0",
+    "openai>=2.14.0",
+    "openpyxl>=3.1.5",
+    "passlib[bcrypt]>=1.7.4",
+    "psycopg2>=2.9.11",
+    "psycopg[binary]>=3.3.2",
+    "pyarrow>=23.0.1",
+    "pydantic-settings>=2.12.0",
+    "pydantic[email]>=2.12.5",
+    "pymupdf>=1.26.7",
+    "python-dotenv>=1.2.1",
+    "python-jose[cryptography]>=3.5.0",
+    "qdrant-client>=1.16.2",
+    "s3fs>=2026.2.0",
+    "sqlalchemy>=2.0.45",
+    "uvicorn[standard]>=0.38.0",
+]
