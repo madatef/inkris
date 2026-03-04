@@ -14,3 +14,5 @@ venv
 #env variables
 .env
 env
+
+frontend/
