@@ -24,7 +24,7 @@ async def event_stream(user=Depends(get_current_user)):
                 event = json.loads(msg["data"])
 
                 # Strict user isolation
-                if event["data"].get("user_id") != str(user.id):
+                if str(event["data"].get("user_id")) != str(user.id):
                     continue
 
                 yield f"event: {event['type']}\n"
@@ -40,5 +40,6 @@ async def event_stream(user=Depends(get_current_user)):
         headers={
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",  # Disables nginx buffering for production
         },
     )
