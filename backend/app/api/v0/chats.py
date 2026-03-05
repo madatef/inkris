@@ -102,4 +102,12 @@ async def send_message(
     conv: Conversation = Depends(get_current_conversation),
 ):
 
-    return StreamingResponse(agent_streamer(session, msg=data.content, user_name=f"{user.last_name}, {user.first_name}", conv=conv), media_type="text/event-stream")
+    return StreamingResponse(
+        agent_streamer(session, msg=data.content, user_name=f"{user.last_name}, {user.first_name}", conv=conv), 
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",  # Disables nginx buffering for production
+        },
+    )
